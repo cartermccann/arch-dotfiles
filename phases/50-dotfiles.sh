@@ -44,6 +44,6 @@ fi
 # fish as the login shell
 if [ "$(getent passwd "$USER" | cut -d: -f7)" != /usr/bin/fish ]; then
   if [ "$CHECK" = 1 ]; then warn "login shell is not fish"
-  else sudo_run chsh -s /usr/bin/fish "$USER" && ok "login shell: fish"; fi
+  else sudo_run chsh -s /usr/bin/fish "$USER" && [ "$DRY_RUN" = 0 ] && ok "login shell: fish"; fi
 fi
 true

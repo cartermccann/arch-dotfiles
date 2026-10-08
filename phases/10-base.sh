@@ -46,6 +46,5 @@ else
     rustup toolchain list 2>/dev/null | grep -q stable || run rustup default stable
     aur_build paru || die "paru build failed"
   fi
-  [ "$DRY_RUN" = 1 ] || paru_works || die "paru still doesn't run"
-  ok "paru installed"
+  if [ "$DRY_RUN" = 0 ]; then paru_works || die "paru still doesn't run"; ok "paru installed"; fi
 fi
