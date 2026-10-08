@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+RE=$1; shift
+ADDR=$(hyprctl clients -j | jq -r --arg re "$RE" \
+  '[.[] | select(.class | test($re; "i"))] | sort_by(.focusHistoryID) | .[0].address // empty')
+if [ -n "$ADDR" ]; then
+  hyprctl eval "hl.dispatch(hl.dsp.focus({ window = 'address:$ADDR' }))" >/dev/null
+else
+  setsid -f "$@" >/dev/null 2>&1
+fi
+

@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Waybar updates module: pending pacman + AUR updates, refreshed every 5 min.
+#   status → waybar JSON (hidden when nothing is pending)
+#   check  → refresh the cache (checkupdates uses a private db copy, so it
+#            never touches the real sync db and needs no root)
+#   menu   → list + "update everything" in a terminal
+CACHE=${XDG_CACHE_HOME:-$HOME/.cache}/ouranos/updates
+mkdir -p "$(dirname "$CACHE")"
+case "$1" in
+  check)
+    OUT=$(mktemp)
+    command -v checkupdates >/dev/null && checkupdates 2>/dev/null | sed 's/^/repo  /' >> "$OUT"
+    command -v paru >/dev/null && paru -Qua 2>/dev/null | sed 's/^/aur   /' >> "$OUT"
+    mv "$OUT" "$CACHE"
+    pkill -RTMIN+8 waybar
+    ;;
+  status)
+    # A stale cache (older than the module interval) triggers a background refresh.
+    if [ ! -f "$CACHE" ] || [ -n "$(find "$CACHE" -mmin +30 2>/dev/null)" ]; then
+      setsid -f "$0" check >/dev/null 2>&1
+    fi
+    N=$(grep -c . "$CACHE" 2>/dev/null); N=${N:-0}
+    if [ "$N" -gt 0 ]; then
+      jq -cRs --arg n "$N" '{text: "󰁝 UPD \($n)", tooltip: rtrimstr("\n"), class: "pending"}' "$CACHE"
+    else
+      echo '{"text":""}'
+    fi
+    ;;
+  menu)
+    PICK=$( (cat "$CACHE" 2>/dev/null; echo "Update everything (up)"; echo "Re-check now") \
+      | fuzzel --dmenu --config "$HOME/.config/fuzzel/hypr.ini" --prompt="updates › ")
+    case "$PICK" in
+      "Update everything"*)
+        ghostty --class=TUI.float -e fish -ic "up; and $0 check; read -P 'enter to close '" & ;;
+      "Re-check now") "$0" check ;;
+    esac
+    ;;
+esac

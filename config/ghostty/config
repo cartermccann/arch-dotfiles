@@ -1,0 +1,73 @@
+font-family = JetBrainsMono Nerd Font
+font-size = 14
+
+background = #0a0c11
+foreground = #e7ebf2
+
+palette = 0=#0f1218
+palette = 1=#f87171
+palette = 2=#34d399
+palette = 3=#fbbf24
+palette = 4=#3b6bff
+palette = 5=#a78bfa
+palette = 6=#22d3ee
+palette = 7=#c7cdd8
+palette = 8=#3a4152
+palette = 9=#f87171
+palette = 10=#34d399
+palette = 11=#fbbf24
+palette = 12=#3b6bff
+palette = 13=#a78bfa
+palette = 14=#22d3ee
+palette = 15=#f4f7fc
+
+cursor-color = #3b6bff
+cursor-text = #0a0c11
+selection-foreground = #f4f7fc
+selection-background = #171b23
+
+# Glass: ghostty owns background alpha so text stays fully opaque; blur
+# comes from the compositor, which in practice means Hyprland's
+# decoration:blur only. Mainline niri has no blur of any kind — this
+# comment used to claim a `background-effect` node, and believing it is
+# what left an unparseable node in the niri config that silently dropped
+# that whole session to compiled-in defaults. Under niri this stays
+# transparent over the wallpaper, unblurred. ghostty's own
+# background-blur stays false regardless — it's
+# a no-op on both (KDE-only on Linux, ghostty#4626). If hyprwm#9705
+# bites (full transparency on tab close), pin via window rule override.
+# 0.68 = heavy glass; minimum-contrast below keeps glyphs legible over it.
+background-opacity = 0.68
+background-blur = false
+cursor-style = bar
+cursor-style-blink = true
+
+# Smooth cursor (ghostty 1.2+ cursor uniforms; relative path = next to
+# this config file). Three vendored options — exactly one active:
+#   cursor_warp.glsl  — Neovide-like: cursor stretches into a wedge and
+#                       snaps back (per-corner easing). Current pick.
+#   cursor_tail.glsl  — kitty-like comet trail, capped length.
+#   cursor_smear.glsl — original ribbon smear, quietest.
+# Switch cursor-style to block for a bolder trail — bar gives a thin
+# light-streak, which is the quieter read.
+custom-shader = shaders/cursor_warp.glsl
+# `always`, not `true`: with a bar cursor, unfocus swaps to a hollow block
+# — trail shaders trigger on that change and freeze mid-frame unless the
+# animation keeps ticking (sahaj-b/ghostty-cursor-shaders README).
+custom-shader-animation = always
+adjust-cell-height = 2
+font-thicken = true
+bold-is-bright = false
+mouse-hide-while-typing = true
+clipboard-trim-trailing-spaces = true
+window-padding-x = 14
+window-padding-y = 14
+window-padding-balance = true
+window-padding-color = extend
+minimum-contrast = 1.2
+unfocused-split-opacity = 0.85
+split-divider-color = #171b23
+gtk-titlebar = false
+window-decoration = false
+notify-on-command-finish = unfocused
+notify-on-command-finish-after = 10s

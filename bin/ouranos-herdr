@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+CLIENTS=$(hyprctl clients -j)
+ADDR=$(jq -r --arg c 'dev.ouranos.herdr' \
+  '[.[] | select(.class == $c)] | sort_by(.focusHistoryID) | .[0].address // empty' <<<"$CLIENTS")
+if [ -z "$ADDR" ]; then
+  PIDS=$(for p in $(pgrep -x herdr); do
+      while [ "${p:-1}" -gt 1 ]; do echo "$p"; p=$(ps -o ppid= -p "$p" | tr -d ' '); done
+    done | sort -un | jq -sc .)
+  TITLES=$(herdr workspace list 2>/dev/null | jq -c --arg h "$(uname -n)" \
+    '[.result.workspaces[].label | "\($h): \(.)"]') || TITLES='[]'
+  ADDR=$(jq -r --argjson pids "${PIDS:-[]}" --argjson titles "${TITLES:-[]}" \
+    '[.[] | select((.pid as $p | $pids | index($p)) and (.title as $t | $titles | index($t)))]
+     | sort_by(.focusHistoryID) | .[0].address // empty' <<<"$CLIENTS")
+fi
+if [ -n "$ADDR" ]; then
+  hyprctl eval "hl.dispatch(hl.dsp.focus({ window = 'address:$ADDR' }))" >/dev/null
+else
+  setsid -f ghostty --class=dev.ouranos.herdr -e herdr >/dev/null 2>&1
+fi
+

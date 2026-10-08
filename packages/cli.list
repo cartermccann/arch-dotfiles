@@ -1,0 +1,47 @@
+# The CLI toolbelt, mirroring home/tools.nix
+ripgrep
+fd
+jq
+yq
+tree
+eza
+lsd
+bat
+dust
+yazi
+glow
+gum
+procs
+btop
+htop
+fastfetch
+inxi
+croc
+fzf
+zoxide
+atuin
+starship
+direnv
+tmux
+fish
+lazygit
+lazydocker
+git-lfs
+git-delta
+just
+watchexec
+hyperfine
+tokei
+tealdeer
+yt-dlp
+ffmpeg
+pandoc-cli pandoc-bin
+poppler
+imagemagick
+cava
+cmatrix
+figlet
+openbsd-netcat
+# yazi previews
+ffmpegthumbnailer
+7zip

@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+CAFF="${XDG_RUNTIME_DIR:-/tmp}/ouranos-caffeine.pid"
+alive() { [ -f "$1" ] && kill -0 "$(cat "$1")" 2>/dev/null; }
+
+active() {
+  case "$1" in
+    dictation) alive "$HOME/.local/state/parakeet-dictation/recorder.pid" || alive "$HOME/.local/state/parakeet-dictation/batch-recorder.pid" ;;
+    record)    pgrep -f "(^|/)(gpu-screen-recorder|wf-recorder)( |$)" >/dev/null ;;
+    night)     T=$(hyprctl hyprsunset temperature 2>/dev/null | tr -dc 0-9); [ -n "$T" ] && [ "$T" -lt 6000 ] ;;
+    caffeine)  alive "$CAFF" ;;
+    dnd)       [ "$(swaync-client -D 2>/dev/null)" = true ] ;;
+    heavy)     systemctl is-active --quiet podman-llama-heavy 2>/dev/null ;;
+    *) return 1 ;;
+  esac
+}
+
+# Modes whose backing tool isn't on this machine stay hidden in the bar.
+available() {
+  case "$1" in
+    dictation) [ -x ~/.local/bin/toggle-dictation-batch.sh ] ;;
+    heavy)     systemctl cat podman-llama-heavy >/dev/null 2>&1 ;;
+    *) return 0 ;;
+  esac
+}
+
+glyph() {
+  case "$1" in
+    dictation) echo "󰍬" ;; record) echo "󰑊" ;; night) echo "󰖔" ;;
+    caffeine) echo "󰅶" ;; dnd) echo "󰂛" ;; heavy) echo "󰍛" ;;
+  esac
+}
+label() {
+  case "$1" in
+    dictation) echo "Dictation · Super+Alt+L" ;; record) echo "Screen recording · Super+Alt+R" ;;
+    night) echo "Night light · Super+Ctrl+N" ;; caffeine) echo "Caffeine: screen stays on" ;;
+    dnd) echo "Do not disturb" ;; heavy) echo "Heavy mode: llama-server owns the GPU" ;;
+  esac
+}
+
+case "$1" in
+  # Exit status only: lets the Ouranos menu tick active modes.
+  is) active "$2" ;;
+  status)
+    MODE=$2; VIEW=$3
+    available "$MODE" || { echo '{"text":""}'; exit 0; }
+    if active "$MODE"; then ON=1; else ON=0; fi
+    CLASS=on; [ "$MODE" = dictation ] || [ "$MODE" = record ] && CLASS=live
+    if [ "$VIEW" = on ] && [ $ON = 1 ]; then
+      printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' "$(glyph "$MODE")" "$(label "$MODE")" "$CLASS"
+    elif [ "$VIEW" = peek ] && [ $ON = 0 ]; then
+      printf '{"text":"%s","tooltip":"%s (off)","class":"peek"}\n' "$(glyph "$MODE")" "$(label "$MODE")"
+    else
+      echo '{"text":""}'
+    fi
+    ;;
+  toggle)
+    case "$2" in
+      dictation) ~/.local/bin/toggle-dictation-batch.sh ;;
+      record)    hypr-record ;;
+      night)     hypr-night-toggle ;;
+      caffeine)
+        if alive "$CAFF"; then
+          # setsid made it a process group: kill systemd-inhibit AND its sleep
+          kill -- -"$(cat "$CAFF")" 2>/dev/null || kill "$(cat "$CAFF")"; rm -f "$CAFF"
+        else
+          setsid systemd-inhibit --what=idle --who=ouranos --why="caffeine (bar)" sleep infinity &
+          echo $! > "$CAFF"; disown
+        fi ;;
+      dnd)   swaync-client -d -sw >/dev/null ;;
+      # Needs sudo (podman units), so it opens a terminal instead of
+      # failing silently from a click.
+      heavy)
+        if active heavy; then CMD=heavy-stop; else CMD=heavy; fi
+        ghostty --class=TUI.float -e fish -ic "$CMD; read -P 'enter to close '" & ;;
+    esac
+    sleep 0.2
+    pkill -RTMIN+8 waybar
+    ;;
+esac
+

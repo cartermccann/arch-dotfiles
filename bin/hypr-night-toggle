@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+T=$(hyprctl hyprsunset temperature 2>/dev/null | tr -dc 0-9)
+if [ -n "$T" ] && [ "$T" -lt 6000 ]; then
+  hyprctl hyprsunset temperature 6500
+  hyprctl hyprsunset identity
+else
+  hyprctl hyprsunset temperature 3500
+fi
+# hyprsunset acks before it applies, so an immediate re-read is stale.
+sleep 0.2
+pkill -RTMIN+8 waybar || true
+

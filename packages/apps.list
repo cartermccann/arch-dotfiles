@@ -1,0 +1,27 @@
+# Desktop apps. Carter's set minus the personal ones; Chrome instead of Zen.
+google-chrome chromium
+ghostty @appimage ghostty
+firefox
+obsidian obsidian-bin @appimage obsidian
+nautilus
+gnome-calculator
+gnome-disk-utility
+localsend-bin localsend
+mpv
+imv
+pinta @skip no aarch64 build
+evince
+libreoffice-fresh
+obs-studio @skip no aarch64 build (the browser source needs x86 CEF)
+inkscape
+blanket
+spotify-player
+kdenlive
+system-config-printer
+tidal-hifi-bin @webapp TIDAL https://listen.tidal.com
+cursor-bin @appimage cursor
+bruno-bin @webapp Bruno https://www.usebruno.com/
+slack-desktop @webapp Slack https://app.slack.com/client
+spotify @webapp Spotify https://open.spotify.com
+beeper-bin @webapp Beeper https://chat.beeper.com
+@webapp Figma https://www.figma.com/files

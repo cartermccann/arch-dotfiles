@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# The default browser: Google Chrome where it is installed, Chromium otherwise
+# (aarch64 VMs may only have Chromium). Wayland-native either way.
+for b in google-chrome-stable chromium; do
+  command -v "$b" >/dev/null && exec "$b" --ozone-platform-hint=auto "$@"
+done
+notify-send -a browser "No browser found" "Install google-chrome or chromium"

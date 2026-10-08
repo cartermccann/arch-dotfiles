@@ -1,0 +1,5 @@
+# ~/.profile: read by the login session (Ly runs it before starting Hyprland),
+# so apps launched from the desktop (not just from a terminal) see these.
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$HOME/.cargo/bin:$PATH"
+export EDITOR=nvim
+export VISUAL=nvim

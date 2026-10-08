@@ -1,0 +1,265 @@
+[
+ {
+  "glyph": "󰀻",
+  "hint": "Super+Space",
+  "id": "apps",
+  "label": "Apps",
+  "action": null
+ },
+ {
+  "action": "fuzzel --config $HOME/.config/fuzzel/hypr.ini",
+  "glyph": "󰀻",
+  "hint": "launcher",
+  "id": "apps.all",
+  "label": "All apps"
+ },
+ {
+  "id": "apps.browser",
+  "label": "Chrome",
+  "glyph": "󰊯",
+  "hint": "focus or open",
+  "action": "ouranos-focus-or-launch '^(google-chrome|chromium)$' ouranos-browser"
+ },
+ {
+  "id": "apps.claude",
+  "label": "Claude Code",
+  "glyph": "󰚩",
+  "hint": "in a terminal",
+  "action": "ghostty -e claude"
+ },
+ {
+  "action": "ouranos-focus-or-launch '^cursor$' cursor",
+  "glyph": "󰨞",
+  "hint": "focus or open",
+  "id": "apps.cursor",
+  "label": "Cursor"
+ },
+ {
+  "action": "ouranos-focus-or-launch '^(obsidian|md.obsidian)$' obsidian",
+  "glyph": "󰠮",
+  "hint": "focus or open",
+  "id": "apps.obsidian",
+  "label": "Obsidian"
+ },
+ {
+  "action": "ouranos-agents menu",
+  "glyph": "󰚩",
+  "hint": "Super+Shift+A",
+  "id": "agents",
+  "label": "Agents",
+  "when": "command -v herdr >/dev/null"
+ },
+ {
+  "action": "ouranos-project",
+  "glyph": "󰉋",
+  "hint": "Super+O",
+  "id": "projects",
+  "label": "Projects"
+ },
+ {
+  "action": "ouranos-herdr",
+  "glyph": "󰆍",
+  "hint": "agent workspaces",
+  "id": "herdr",
+  "label": "Herdr",
+  "when": "command -v herdr >/dev/null"
+ },
+ {
+  "glyph": "󰄀",
+  "hint": "Super+Ctrl+C",
+  "id": "capture",
+  "label": "Capture",
+  "action": null
+ },
+ {
+  "action": "grimblast --freeze save area - | satty -f - --output-filename ~/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png",
+  "hint": "Super+Shift+S",
+  "id": "capture.region",
+  "label": "Screenshot · region"
+ },
+ {
+  "action": "grimblast save active - | satty -f - --output-filename ~/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png",
+  "hint": "annotate in satty",
+  "id": "capture.window",
+  "label": "Screenshot · window"
+ },
+ {
+  "action": "grimblast save output ~/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png && notify-send -a capture 'Screenshot saved'",
+  "hint": "focused monitor",
+  "id": "capture.screen",
+  "label": "Screenshot · screen"
+ },
+ {
+  "action": "hypr-record",
+  "hint": "Super+Alt+R",
+  "id": "capture.record",
+  "label": "Record · focused monitor",
+  "when": "! pgrep -f \"(^|/)(gpu-screen-recorder|wf-recorder)( |$)\" >/dev/null"
+ },
+ {
+  "action": "mkdir -p ~/Videos/Recordings && gpu-screen-recorder -w region -region \"$(slurp -f \"%wx%h+%x+%y\")\" -f 60 -a default_output -o ~/Videos/Recordings/$(date +%Y-%m-%d_%H-%M-%S).mp4 >/dev/null 2>&1 & pkill -RTMIN+8 waybar",
+  "hint": "select an area",
+  "id": "capture.region-record",
+  "label": "Record · region",
+  "when": "command -v gpu-screen-recorder >/dev/null && ! pgrep -f \"(^|/)gpu-screen-recorder( |$)\" >/dev/null"
+ },
+ {
+  "action": "hypr-record",
+  "hint": "save to ~/Videos/Recordings",
+  "id": "capture.stop",
+  "label": "Stop recording",
+  "when": "pgrep -f \"(^|/)(gpu-screen-recorder|wf-recorder)( |$)\" >/dev/null"
+ },
+ {
+  "action": "grim -g \"$(slurp)\" - | tesseract stdin stdout 2>/dev/null | wl-copy && notify-send -a capture \"Text copied\"",
+  "hint": "OCR → clipboard",
+  "id": "capture.text",
+  "label": "Text from screen"
+ },
+ {
+  "action": "grim -g \"$(slurp)\" - | zbarimg -q --raw - | wl-copy && notify-send -a capture \"QR decoded and copied\"",
+  "hint": "decode → clipboard",
+  "id": "capture.qr",
+  "label": "QR code from screen"
+ },
+ {
+  "action": "hyprpicker -a",
+  "hint": "Super+Shift+C",
+  "id": "capture.color",
+  "label": "Color picker"
+ },
+ {
+  "glyph": "󰔡",
+  "hint": "Super+Ctrl+O",
+  "id": "toggle",
+  "label": "Toggle",
+  "action": null
+ },
+ {
+  "action": "ouranos-mode toggle night",
+  "checked": "ouranos-mode is night",
+  "hint": "Super+Ctrl+N",
+  "id": "toggle.night",
+  "label": "Night light"
+ },
+ {
+  "action": "ouranos-mode toggle caffeine",
+  "checked": "ouranos-mode is caffeine",
+  "hint": "screen stays on",
+  "id": "toggle.caffeine",
+  "label": "Caffeine"
+ },
+ {
+  "action": "ouranos-mode toggle dnd",
+  "checked": "ouranos-mode is dnd",
+  "hint": "notifications",
+  "id": "toggle.dnd",
+  "label": "Do not disturb"
+ },
+ {
+  "action": "ouranos-mode toggle dictation",
+  "checked": "ouranos-mode is dictation",
+  "hint": "Super+Alt+L",
+  "id": "toggle.dictation",
+  "label": "Dictation",
+  "when": "[ -x ~/.local/bin/toggle-dictation-batch.sh ]"
+ },
+ {
+  "action": "pkill -USR1 waybar",
+  "hint": "Super+B",
+  "id": "toggle.bar",
+  "label": "Bar"
+ },
+ {
+  "glyph": "󰒖",
+  "hint": "clipboard, LocalSend, Taildrop",
+  "id": "share",
+  "label": "Share",
+  "action": null
+ },
+ {
+  "action": "cliphist list | fuzzel --dmenu --config $HOME/.config/fuzzel/hypr.ini --prompt='clipboard › ' | cliphist decode | wl-copy",
+  "hint": "Super+V",
+  "id": "share.clipboard",
+  "label": "Clipboard history"
+ },
+ {
+  "action": "ouranos-tailscale menu",
+  "hint": "to a tailnet machine",
+  "id": "share.taildrop",
+  "label": "Taildrop a file",
+  "when": "systemctl is-enabled --quiet tailscaled 2>/dev/null"
+ },
+ {
+  "action": "ouranos-focus-or-launch '^localsend' localsend",
+  "hint": "focus or open",
+  "id": "share.localsend",
+  "label": "LocalSend"
+ },
+ {
+  "glyph": "󰏘",
+  "hint": "wallpaper, night light",
+  "id": "style",
+  "label": "Style",
+  "action": null
+ },
+ {
+  "action": "hypr-wallpaper-pick",
+  "hint": "Super+Shift+W",
+  "id": "style.wallpaper",
+  "label": "Wallpaper"
+ },
+ {
+  "action": "ouranos-mode toggle night",
+  "checked": "ouranos-mode is night",
+  "hint": "Super+Ctrl+N",
+  "id": "style.night",
+  "label": "Night light"
+ },
+ {
+  "action": "ouranos-updates menu",
+  "glyph": "󰚰",
+  "hint": "pacman + AUR",
+  "id": "update",
+  "label": "Update"
+ },
+ {
+  "action": "ouranos-keys",
+  "glyph": "󰌌",
+  "hint": "Super+/",
+  "id": "keys",
+  "label": "Keybindings"
+ },
+ {
+  "glyph": "⏻",
+  "hint": "Super+Escape",
+  "id": "system",
+  "label": "System",
+  "action": null
+ },
+ {
+  "action": "hyprlock",
+  "id": "system.lock",
+  "label": "Lock"
+ },
+ {
+  "action": "hyprctl dispatch 'hl.dsp.exit()'",
+  "id": "system.logout",
+  "label": "Log out"
+ },
+ {
+  "action": "systemctl suspend",
+  "id": "system.suspend",
+  "label": "Suspend"
+ },
+ {
+  "action": "systemctl reboot",
+  "id": "system.reboot",
+  "label": "Reboot"
+ },
+ {
+  "action": "systemctl poweroff",
+  "id": "system.shutdown",
+  "label": "Shut down"
+ }
+]

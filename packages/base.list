@@ -1,0 +1,21 @@
+# Bootstrapping essentials (phases/10-base.sh installs paru right after these)
+base-devel
+git
+curl
+wget
+unzip
+zip
+man-db
+man-pages
+openssh
+rsync
+less
+which
+# Audio stack first: ffmpeg & co. depend on a JACK provider, and pacman's
+# default pick (jack2) conflicts with pipewire-jack later. Installing
+# pipewire-jack up front makes it the provider.
+pipewire
+pipewire-jack
+pipewire-pulse
+pipewire-alsa
+wireplumber

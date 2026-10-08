@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+REC='(^|/)(gpu-screen-recorder|wf-recorder)( |$)'
+if pgrep -f "$REC" >/dev/null; then
+  pkill -INT -f "$REC"
+  notify-send -a hypr-record "Recording saved" "$HOME/Videos/Recordings"
+else
+  mkdir -p ~/Videos/Recordings
+  MON=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | .name')
+  OUT=~/Videos/Recordings/$(date +%Y-%m-%d_%H-%M-%S).mp4
+  if command -v gpu-screen-recorder >/dev/null; then
+    gpu-screen-recorder -w "$MON" -f 60 -a default_output -o "$OUT" >/dev/null 2>&1 &
+  else
+    # wf-recorder fallback (VMs have no hardware encoder for gpu-screen-recorder)
+    wf-recorder -o "$MON" -f "$OUT" >/dev/null 2>&1 &
+  fi
+  disown
+fi
+sleep 0.3
+pkill -RTMIN+8 waybar
+

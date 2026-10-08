@@ -1,0 +1,4 @@
+# AI CLIs. Codex comes from npm via mise (phases/45-ai.sh).
+claude-code @claude-installer
+opencode-bin
+cursor-cli

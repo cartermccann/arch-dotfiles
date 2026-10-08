@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Waybar clock → calendar dropdown. GTK4 layer-shell popup (calendar.py).
+# Reads iCal URLs from ~/.config/credentials/calendars.toml; see GUIDE.md.
+SCRIPT=$HOME/.local/share/ouranos/calendar.py
+pkill -f -- "$SCRIPT" && exit 0
+# gtk4-layer-shell has to load before libwayland-client; for a Python
+# client that means preloading it.
+export LD_PRELOAD=/usr/lib/libgtk4-layer-shell.so${LD_PRELOAD:+:$LD_PRELOAD}
+exec python3 "$SCRIPT" "$@"

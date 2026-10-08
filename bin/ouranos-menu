@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+MENU=$HOME/.config/ouranos/menu.json
+ROUTE=${1:-}
+while :; do
+  ITEMS=$(jq -c --arg r "$ROUTE" \
+    '[.[] | select((.id | split(".") | .[:-1] | join(".")) == $r)]' "$MENU")
+  # One bash for every guard on this level: prints "index shown checked".
+  STATE=$(jq -r 'to_entries[] |
+    "if \(.value.when // "true"); then w=1; else w=0; fi; " +
+    "if \(.value.checked // "false"); then c=1; else c=0; fi; echo \(.key) $w $c"' <<<"$ITEMS" \
+    | bash 2>/dev/null)
+  LINES=(); MAP=()
+  if [ -n "$ROUTE" ]; then LINES+=("‹  back"); MAP+=(back); fi
+  while read -r i w c; do
+    [ "$w" = 1 ] || continue
+    ROW=$(jq -r --argjson i "$i" --arg c "$c" '.[$i] |
+      "\(.glyph // " ") \(if $c == "1" then "✓ " else "" end)\(.label)" as $l |
+      "\($l)\(" " * ([2, 34 - ($l | length)] | max))\(.hint // "")"' <<<"$ITEMS")
+    LINES+=("$ROW"); MAP+=("$i")
+  done <<<"$STATE"
+  PROMPT="ouranos${ROUTE:+ / ${ROUTE//./ / }} › "
+  SEL=$(printf '%s\n' "${LINES[@]}" | fuzzel --dmenu --config "$HOME/.config/fuzzel/hypr.ini" --index --prompt="$PROMPT" --width 52) || exit 0
+  PICK=${MAP[$SEL]}
+  if [ "$PICK" = back ]; then
+    if [[ "$ROUTE" == *.* ]]; then ROUTE=${ROUTE%.*}; else ROUTE=""; fi
+    continue
+  fi
+  ID=$(jq -r --argjson i "$PICK" '.[$i].id' <<<"$ITEMS")
+  ACTION=$(jq -r --argjson i "$PICK" '.[$i].action // empty' <<<"$ITEMS")
+  if [ -n "$ACTION" ]; then
+    setsid -f bash -c "$ACTION" >/dev/null 2>&1
+    exit 0
+  fi
+  ROUTE=$ID
+done
+

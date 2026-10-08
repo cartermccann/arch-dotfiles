@@ -1,0 +1,11 @@
+[Unit]
+Description=Clipboard shared with the UTM host (SPICE → wl-clipboard)
+# Started by Hyprland (see the VM block in ~/.config/hypr/local.lua), after
+# it has exported WAYLAND_DISPLAY to the user manager. No [Install]: there is
+# no graphical-session.target in a Ly-launched Hyprland session to hang it on.
+ConditionPathExists=/dev/virtio-ports/com.redhat.spice.0
+
+[Service]
+ExecStart=%h/.local/bin/ouranos-vdagent
+Restart=on-failure
+RestartSec=5

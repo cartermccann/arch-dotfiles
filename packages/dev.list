@@ -1,0 +1,38 @@
+# Languages, containers, cloud CLIs. Node/pnpm/bun/deno come from mise
+# (phases/25-dev.sh), not from here.
+mise mise-bin
+go
+rustup
+uv
+python
+python-pip
+docker
+docker-compose
+docker-buildx
+github-cli
+bubblewrap
+gcc
+make
+pkgconf
+openssl
+cmake
+aws-cli-v2
+google-cloud-cli
+flyctl-bin @mise flyctl
+# Neovim + every LSP/formatter it uses (no Mason). npm-only servers
+# (vtsls, tailwind, html/css/json, prettierd) are installed via mise.
+neovim
+tree-sitter-cli
+lua-language-server
+gopls
+taplo-cli
+marksman @mise marksman
+stylua
+shfmt
+gofumpt
+clang
+pyright
+ruff
+bash-language-server
+yaml-language-server
+biome @mise biome

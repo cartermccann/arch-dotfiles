@@ -1,0 +1,9 @@
+-- ~/.config/hypr/local.lua: this machine's overrides.
+-- hyprland.lua loads this file last, so anything set here wins. The
+-- installer wrote it once from a template and will not overwrite it.
+--
+-- Monitors: `hyprctl monitors` lists output names, then e.g.
+--   hl.monitor({ output = "eDP-1", mode = "2560x1600@60", position = "0x0", scale = 1.6 })
+--
+-- Keyboard: e.g. Caps Lock as Escape (vim hands)
+--   hl.config({ input = { kb_options = "caps:escape" } })

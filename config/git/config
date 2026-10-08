@@ -1,0 +1,36 @@
+# ~/.config/git/config: shared settings, ported from Carter's setup.
+# Your name/email live in ~/.gitconfig (the installer asks for them), and
+# `gh auth setup-git` adds the GitHub credential helper there too.
+
+[init]
+	defaultBranch = main
+[pull]
+	rebase = true
+[push]
+	autoSetupRemote = true
+[commit]
+	verbose = true
+[branch]
+	sort = -committerdate
+[tag]
+	sort = -version:refname
+[column]
+	ui = auto
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+[rerere]
+	enabled = true
+	autoupdate = true
+
+# delta: syntax-highlighted diffs with line numbers
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	line-numbers = true
+	navigate = true
+[merge]
+	conflictStyle = zdiff3

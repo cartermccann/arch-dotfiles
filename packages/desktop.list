@@ -1,0 +1,74 @@
+# Hyprland session: compositor, bar, launcher, notifications, OSD, lock/idle
+hyprland
+hyprlock
+hypridle
+hyprsunset
+hyprpicker
+hyprpolkitagent
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+qt5-wayland
+qt6-wayland
+waybar
+swaync
+swayosd swayosd-git
+fuzzel
+awww
+# screenshots, recording, clipboard
+grim
+slurp
+grimblast grimblast-git
+satty
+wf-recorder
+x86_64: gpu-screen-recorder
+cliphist
+wl-clipboard
+tesseract
+tesseract-data-eng
+zbar
+# hardware keys + notifications
+brightnessctl
+playerctl
+libnotify
+# audio, network, bluetooth
+pipewire
+pipewire-pulse
+pipewire-alsa
+pipewire-jack
+wireplumber
+pavucontrol
+qpwgraph
+pamixer
+networkmanager
+# Tailscale: installed, off until you run `sudo systemctl enable --now tailscaled && sudo tailscale up`
+tailscale
+bluez
+bluez-utils
+blueman
+bluetui
+# calendar popup (waybar clock)
+python-gobject
+gtk4
+gtk4-layer-shell
+python-icalendar
+python-recurring-ical-events
+# fonts + theme
+ttf-jetbrains-mono-nerd
+ttf-cascadia-mono-nerd
+noto-fonts
+noto-fonts-cjk
+noto-fonts-emoji
+bibata-cursor-theme-bin bibata-cursor-theme
+papirus-icon-theme
+adw-gtk-theme
+# plumbing
+pacman-contrib
+gnome-keyring
+libsecret
+polkit
+xdg-utils
+xdg-user-dirs
+mesa-utils
+cups
+# login screen
+ly

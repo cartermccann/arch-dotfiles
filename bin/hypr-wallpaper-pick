@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+PICK=$(find -L ~/wallpapers -type f \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' \) \
+  | fuzzel --dmenu --config "$HOME/.config/fuzzel/hypr.ini" --prompt="Wallpaper: ")
+[ -n "$PICK" ] || exit 0
+magick "$PICK" ~/wallpaper.png
+# Grow the new wallpaper out from the cursor; fall back to 0,0 when invoked
+# outside Hyprland (the script is niri-safe by construction).
+POS=$(hyprctl cursorpos 2>/dev/null | tr -d ' ')
+[ -n "$POS" ] || POS="0,0"
+awww img ~/wallpaper.png \
+  --transition-type grow --transition-pos "$POS" \
+  --transition-fps 60 --transition-duration 0.7 --transition-bezier .05,.7,.1,1
+

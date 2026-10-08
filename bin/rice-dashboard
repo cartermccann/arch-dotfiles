@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+tmux new-session -d -s rice -x "$(tput cols)" -y "$(tput lines)"
+tmux send-keys -t rice 'btop' Enter
+tmux split-window -h -t rice -p 40
+tmux send-keys -t rice 'cava' Enter
+tmux split-window -v -t rice -p 50
+tmux send-keys -t rice 'yazi' Enter
+tmux select-pane -t rice:1.1
+tmux attach -t rice
+

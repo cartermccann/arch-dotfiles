@@ -1,0 +1,80 @@
+/* swaync stylesheet for the Hyprland session.
+ *
+ * Colours and the Ouranos glass tokens come from _ouranos.css, generated next
+ * to this file (the Ouranos palette; the same file ships to waybar, swaync,
+ * swayosd and the calendar). The control centre is a summoned surface
+ * (lens tier); notification cards stay up on their own (frost tier). */
+@import url("_ouranos.css");
+
+/* Explicit type scale — swaync otherwise inherits the (oversized) GTK default. */
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 12px;
+}
+.control-center {
+  background-color: @lens_bg;
+  background-image: linear-gradient(to bottom, @lens_sheen, transparent 40%);
+  color: @base05;
+  border: 1px solid @lens_hairline;
+  box-shadow: inset 0 1px 0 @lens_rim, inset 1px 0 0 @lens_fringe_l,
+    inset -1px 0 0 @lens_fringe_r, inset 0 -1px 0 @lens_caustic,
+    inset 0 0 18px @lens_glow;
+  border-radius: 14px;
+  margin: 8px;
+  padding: 12px;
+}
+.notification-row .notification-background .notification {
+  background: @frost_bg;
+  color: @base05;
+  border: 1px solid @frost_hairline;
+  box-shadow: inset 0 1px 0 @frost_rim, inset 0 -1px 0 @frost_caustic;
+  border-radius: 14px;
+  margin: 6px 4px;
+  padding: 4px;
+}
+.notification-row .notification-background .notification.critical {
+  border-color: @base08;
+}
+.notification .summary {
+  font-size: 13px;
+  font-weight: 600;
+  color: @base05;
+}
+.notification .body {
+  font-size: 12px;
+  color: @base06;
+}
+.notification .app-name {
+  font-size: 10px;
+  color: @base04;
+}
+.notification .time {
+  font-size: 10px;
+  color: @base04;
+}
+.widget-title {
+  color: @base05;
+  font-size: 13px;
+  font-weight: bold;
+  padding: 4px 8px;
+}
+.widget-title > button {
+  background: @select_bg;
+  box-shadow: inset 0 1px 0 alpha(white, 0.10);
+  color: @base05;
+  font-size: 12px;
+  border-radius: 10px;
+  padding: 2px 10px;
+}
+.widget-dnd {
+  color: @base04;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+.notification-action {
+  background: alpha(@base05, 0.05);
+  box-shadow: inset 0 1px 0 alpha(white, 0.06);
+  color: @base05;
+  font-size: 12px;
+  border-radius: 10px;
+}

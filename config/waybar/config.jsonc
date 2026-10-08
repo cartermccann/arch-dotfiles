@@ -1,0 +1,319 @@
+// Waybar config, ported from Carter's NixOS setup (home/hyprland/waybar.nix).
+// One bar on every monitor. Colours live in style.css + _ouranos.css.
+//
+// Every custom module is a script in ~/.local/bin. Modules whose backing tool
+// is missing print nothing and Waybar hides them:
+//   custom/gpu        → nvidia-smi        custom/agents → herdr
+//   custom/tailscale  → tailscaled enabled custom/updates → only when updates are pending
+//   mode-dictation / mode-heavy → Carter-only tools, hidden here
+// `pkill -RTMIN+8 waybar` refreshes all the custom modules at once.
+{
+  "bluetooth": {
+    "format": "󰂯",
+    "format-connected": "󰂱 {num_connections}",
+    "format-disabled": "󰂲",
+    "on-click": "ghostty --class=TUI.float -e bluetui",
+    "tooltip-format": "{controller_alias}\t{controller_address}",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}"
+  },
+  "clock": {
+    "actions": {
+      "on-click-middle": "tz_up"
+    },
+    "format": "{:%H:%M  ·  %a %b %d}",
+    "format-alt": "{:%Y-%m-%d  ·  week %V}",
+    "format-alt-click": 3,
+    "on-click": "ouranos-calendar",
+    "timezones": [
+      "",
+      "Etc/UTC"
+    ],
+    "tooltip": false
+  },
+  "cpu": {
+    "format": "CPU {usage}%",
+    "interval": 5,
+    "min-length": 8,
+    "on-click": "ghostty --class=TUI.float -e btop"
+  },
+  "custom/agents": {
+    "escape": true,
+    "exec": "ouranos-agents status",
+    "interval": 3,
+    "on-click": "ouranos-agents menu",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/gpu": {
+    "exec": "command -v nvidia-smi >/dev/null && nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits",
+    "format": "GPU {}°",
+    "interval": 10,
+    "min-length": 8,
+    "on-click": "ghostty --class=TUI.float -e btop"
+  },
+  "custom/mode-caffeine": {
+    "escape": true,
+    "exec": "ouranos-mode status caffeine on",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle caffeine",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/mode-dictation": {
+    "escape": true,
+    "exec": "ouranos-mode status dictation on",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle dictation",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/mode-dnd": {
+    "escape": true,
+    "exec": "ouranos-mode status dnd on",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle dnd",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/mode-heavy": {
+    "escape": true,
+    "exec": "ouranos-mode status heavy on",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle heavy",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/mode-night": {
+    "escape": true,
+    "exec": "ouranos-mode status night on",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle night",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/mode-record": {
+    "escape": true,
+    "exec": "ouranos-mode status record on",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle record",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/modes": {
+    "format": "󰇘",
+    "tooltip-format": "modes · hover to show the inactive ones"
+  },
+  "custom/notifications": {
+    "escape": true,
+    "exec": "swaync-client -swb",
+    "format": "{icon}",
+    "format-icons": {
+      "dnd-none": "󰂛",
+      "dnd-notification": "󰂛",
+      "inhibited-none": "󰂚",
+      "inhibited-notification": "󱅫",
+      "none": "󰂚",
+      "notification": "󱅫"
+    },
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "return-type": "json",
+    "tooltip": false
+  },
+  "custom/peek-caffeine": {
+    "escape": true,
+    "exec": "ouranos-mode status caffeine peek",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle caffeine",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/peek-dictation": {
+    "escape": true,
+    "exec": "ouranos-mode status dictation peek",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle dictation",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/peek-dnd": {
+    "escape": true,
+    "exec": "ouranos-mode status dnd peek",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle dnd",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/peek-heavy": {
+    "escape": true,
+    "exec": "ouranos-mode status heavy peek",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle heavy",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/peek-night": {
+    "escape": true,
+    "exec": "ouranos-mode status night peek",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle night",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/peek-record": {
+    "escape": true,
+    "exec": "ouranos-mode status record peek",
+    "interval": 5,
+    "on-click": "ouranos-mode toggle record",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/power": {
+    "format": "⏻",
+    "on-click": "hypr-power-menu",
+    "tooltip": false
+  },
+  "custom/tailscale": {
+    "escape": true,
+    "exec": "ouranos-tailscale status",
+    "interval": 15,
+    "on-click": "ouranos-tailscale menu",
+    "on-click-right": "ouranos-tailscale toggle",
+    "return-type": "json",
+    "signal": 8
+  },
+  "custom/updates": {
+    "escape": true,
+    "exec": "ouranos-updates status",
+    "interval": 300,
+    "on-click": "ouranos-updates menu",
+    "return-type": "json",
+    "signal": 8
+  },
+  "group/active": {
+    "modules": [
+      "custom/mode-dictation",
+      "custom/mode-record",
+      "custom/mode-night",
+      "custom/mode-caffeine",
+      "custom/mode-dnd",
+      "custom/mode-heavy"
+    ],
+    "orientation": "horizontal"
+  },
+  "group/modes": {
+    "drawer": {
+      "children-class": "peek",
+      "transition-duration": 260,
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "custom/modes",
+      "custom/peek-dictation",
+      "custom/peek-record",
+      "custom/peek-night",
+      "custom/peek-caffeine",
+      "custom/peek-dnd",
+      "custom/peek-heavy"
+    ],
+    "orientation": "horizontal"
+  },
+  "height": 34,
+  "hyprland/submap": {
+    "format": "{}",
+    "tooltip": false
+  },
+  "hyprland/workspaces": {
+    "all-outputs": true,
+    "format": "{name}",
+    "on-click": "activate"
+  },
+  "layer": "top",
+  "margin-left": 12,
+  "margin-right": 12,
+  "margin-top": 8,
+  "memory": {
+    "format": "MEM {percentage}%",
+    "interval": 5,
+    "min-length": 8,
+    "on-click": "ghostty --class=TUI.float -e btop"
+  },
+  "modules-center": [
+    "group/modes",
+    "group/active",
+    "clock",
+    "custom/agents",
+    "custom/updates"
+  ],
+  "modules-left": [
+    "hyprland/workspaces",
+    "hyprland/submap"
+  ],
+  "modules-right": [
+    "mpris",
+    "custom/gpu",
+    "cpu",
+    "memory",
+    "custom/tailscale",
+    "network",
+    "bluetooth",
+    "pulseaudio#mic",
+    "pulseaudio",
+    "custom/notifications",
+    "tray",
+    "custom/power"
+  ],
+  "mpris": {
+    "dynamic-len": 28,
+    "dynamic-order": [
+      "title",
+      "artist"
+    ],
+    "format": "{status_icon} {dynamic}",
+    "on-click-middle": "playerctl next",
+    "on-scroll-down": "playerctl previous",
+    "on-scroll-up": "playerctl next",
+    "status-icons": {
+      "paused": "󰏤",
+      "playing": "󰐊",
+      "stopped": "󰓛"
+    },
+    "tooltip-format": "{player}: {title} — {artist}"
+  },
+  "network": {
+    "format-disconnected": "OFFLINE",
+    "format-ethernet": "ETH",
+    "format-wifi": "WIFI {signalStrength}%",
+    "interval": 10,
+    "min-length": 9,
+    "on-click": "ghostty --class=TUI.float -e nmtui",
+    "tooltip-format-ethernet": "{ifname}: {ipaddr}/{cidr}\n↓ {bandwidthDownBytes}  ↑ {bandwidthUpBytes}",
+    "tooltip-format-wifi": "{essid} ({signalStrength}%): {ipaddr}"
+  },
+  "position": "top",
+  "pulseaudio": {
+    "format": "VOL {volume}%",
+    "format-muted": "MUTED",
+    "on-click": "hypr-audio-sink",
+    "on-click-middle": "pavucontrol",
+    "on-click-right": "swayosd-client --output-volume mute-toggle",
+    "scroll-step": 3,
+    "tooltip-format": "{desc} — {volume}%"
+  },
+  "pulseaudio#mic": {
+    "format": "{format_source}",
+    "format-source": "MIC {volume}%",
+    "format-source-muted": "MIC OFF",
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle",
+    "on-click-middle": "pavucontrol -t 4",
+    "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 3%-",
+    "on-scroll-up": "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SOURCE@ 3%+",
+    "tooltip": false
+  },
+  "spacing": 6,
+  "tray": {
+    "icon-size": 16,
+    "spacing": 10
+  }
+}

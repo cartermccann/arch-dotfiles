@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+# ouranos-gpu: hardware vs software rendering inside the UTM VM.
+#
+#   ouranos-gpu          show what's set and what the GPU driver reports
+#   ouranos-gpu --on     try hardware GL (virgl): smoother, blur/shadows back
+#   ouranos-gpu --off    software rendering (llvmpipe): safe everywhere
+#
+# Why this exists: on some UTM versions GPU-rendered windows open but never
+# paint (black terminal/browser). Software rendering always works, at the
+# cost of CPU and the glass effects. UTM 5 is reported to handle --on fine.
+# (Same approach as omarchy-arm-gpu from ggalancs/omarchy-arm-utm.)
+#
+# It flips the block between the ">>> ouranos-gpu" / "<<< ouranos-gpu"
+# markers in ~/.config/hypr/local.lua, then reloads Hyprland. Apps started
+# before the switch keep their old renderer: restart them, or log out and in.
+set -euo pipefail
+F=$HOME/.config/hypr/local.lua
+TAG='-- [gpu-on] '
+[ -f "$F" ] && grep -q '>>> ouranos-gpu' "$F" || { echo "no ouranos-gpu block in $F (not a VM install?)"; exit 1; }
+
+state() { awk '/>>> ouranos-gpu/{b=1;next} /<<< ouranos-gpu/{b=0} b && /^hl.env\("LIBGL_ALWAYS_SOFTWARE"/{s=1} END{print s?"software":"hardware"}' "$F"; }
+renderer() { command -v glxinfo >/dev/null && glxinfo -B 2>/dev/null | sed -n 's/^OpenGL renderer string: //p' || echo "? (install mesa-utils)"; }
+
+case "${1:-}" in
+  "")
+    echo "setting:  $(state) rendering"
+    echo "renderer: $(renderer)"
+    [ "$(state)" = software ] && echo "try:      ouranos-gpu --on   (undo with --off if windows go black)"
+    ;;
+  --on)
+    awk -v t="$TAG" '/>>> ouranos-gpu/{print;b=1;next} /<<< ouranos-gpu/{b=0} b && $0 !~ "^--" {print t $0; next} {print}' "$F" > "$F.tmp" && mv "$F.tmp" "$F"
+    hyprctl reload >/dev/null 2>&1 || true
+    echo "hardware GL on. Log out and back in so every app picks it up."
+    echo "If windows come up black: ouranos-gpu --off"
+    ;;
+  --off)
+    awk -v t="$TAG" '/>>> ouranos-gpu/{print;b=1;next} /<<< ouranos-gpu/{b=0} b && index($0,t)==1 {print substr($0, length(t)+1); next} {print}' "$F" > "$F.tmp" && mv "$F.tmp" "$F"
+    hyprctl reload >/dev/null 2>&1 || true
+    echo "software rendering on (safe mode). Log out and back in so every app picks it up."
+    ;;
+  -h|--help) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//' ;;
+  *) echo "unknown option: $1" >&2; exit 1 ;;
+esac

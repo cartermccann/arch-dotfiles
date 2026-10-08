@@ -1,0 +1,81 @@
+add_newline = true
+command_timeout = 800
+format = "$os$directory$git_branch$git_status$nix_shell$nodejs$rust$golang$python$cmd_duration$character"
+palette = "ouranos"
+
+[aws]
+disabled = true
+
+[character]
+error_symbol = "  [❯](bold fg:err)"
+success_symbol = "  [❯](bold fg:accent)"
+vimcmd_symbol = "  [❮](bold fg:cyan)"
+
+[cmd_duration]
+format = " [](fg:surface)[ $duration ]($style)[](fg:surface)"
+min_time = 2000
+style = "bg:surface fg:warn"
+
+[directory]
+format = "[$path ]($style)[](fg:accent)"
+read_only = " "
+style = "bg:accent fg:ground bold"
+truncate_to_repo = true
+truncation_length = 3
+truncation_symbol = "…/"
+
+[git_branch]
+format = " [](fg:raised)[$symbol$branch ]($style)"
+style = "bg:raised fg:text"
+symbol = " "
+
+[git_status]
+format = "[$all_status$ahead_behind]($style)[](fg:raised)"
+style = "bg:raised fg:accent_soft"
+
+[golang]
+format = " [](fg:surface)[$symbol$version ]($style)[](fg:surface)"
+style = "bg:surface fg:subtext"
+symbol = " "
+
+[nix_shell]
+format = " [](fg:surface)[$symbol$state ]($style)[](fg:surface)"
+impure_msg = "shell"
+pure_msg = "pure"
+style = "bg:surface fg:cyan"
+symbol = " "
+unknown_msg = "shell"
+
+[nodejs]
+format = " [](fg:surface)[$symbol$version ]($style)[](fg:surface)"
+style = "bg:surface fg:subtext"
+symbol = " "
+
+[os]
+disabled = false
+format = "[](fg:accent)[$symbol](bg:accent fg:ground)"
+
+[os.symbols]
+NixOS = " "
+
+[palettes.ouranos]
+accent = "#3b6bff"
+accent_soft = "#6b8fff"
+cyan = "#22d3ee"
+err = "#f87171"
+ground = "#0a0c11"
+raised = "#171b23"
+subtext = "#8b93a4"
+surface = "#0f1218"
+text = "#e7ebf2"
+warn = "#fbbf24"
+
+[python]
+format = " [](fg:surface)[$symbol$version ]($style)[](fg:surface)"
+style = "bg:surface fg:subtext"
+symbol = " "
+
+[rust]
+format = " [](fg:surface)[$symbol$version ]($style)[](fg:surface)"
+style = "bg:surface fg:subtext"
+symbol = " "

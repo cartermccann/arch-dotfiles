@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+TS=tailscale
+# Not installed, or tailscaled not enabled → the bar module stays hidden.
+{ command -v $TS >/dev/null && systemctl is-enabled --quiet tailscaled 2>/dev/null; } \
+  || { [ "$1" = status ] && echo '{"text":""}'; exit 0; }
+case "$1" in
+  status)
+    J=$($TS status --json 2>/dev/null) || { echo '{"text":"TS OFF","class":"off","tooltip":"tailscaled unreachable"}'; exit; }
+    STATE=$(printf '%s' "$J" | jq -r .BackendState)
+    if [ "$STATE" != Running ]; then
+      echo '{"text":"TS OFF","class":"off","tooltip":"Tailscale is down · right-click to connect"}'; exit
+    fi
+    # jq builds the JSON so hostnames with quotes can't break it. Online
+    # peers are listed; offline ones are only counted (a tailnet collects
+    # dozens of dormant devices).
+    printf '%s' "$J" | jq -c '
+      [(.Peer // {})[]] as $p
+      | ([$p[] | select(.ExitNode) | .HostName][0]) as $exit
+      | ([$p[] | select(.Online) | "● \(.HostName)"] | sort) as $on
+      | ([$p[] | select(.Online | not)] | length) as $off
+      | { text: (if $exit then "TS EXIT" else "TS ON" end),
+          class: (if $exit then "exit" else "on" end),
+          tooltip: ((if $exit then ["exit node: \($exit)"] else [] end)
+                    + $on + ["\($off) offline"] | join("\n")) }'
+    ;;
+  toggle)
+    if [ "$($TS status --json 2>/dev/null | jq -r .BackendState)" = Running ]; then $TS down; else $TS up; fi
+    ;;
+  menu)
+    J=$($TS status --json 2>/dev/null) || exit 1
+    SELF=$(printf '%s' "$J" | jq -r .Self.HostName)
+    EXIT=$(printf '%s' "$J" | jq -r '[(.Peer // {})[] | select(.ExitNode) | .HostName][0] // "none"')
+    PEERS=$(printf '%s' "$J" | jq -r '[(.Peer // {})[]] | sort_by((.Online | not), .HostName) | .[] | "\(if .Online then "●" else "○" end) \(.HostName)"')
+    PICK=$(printf 'Exit node: %s\nCopy IP · %s\nSend file (Taildrop)\n%s\nDisconnect\n' "$EXIT" "$SELF" "$PEERS" \
+      | fuzzel --dmenu --config "$HOME/.config/fuzzel/hypr.ini" --prompt="tailscale › ")
+    case "$PICK" in
+      "Exit node:"*)
+        NODE=$( (echo none; printf '%s' "$J" | jq -r '(.Peer // {})[] | select(.ExitNodeOption and .Online) | .HostName') \
+          | fuzzel --dmenu --config "$HOME/.config/fuzzel/hypr.ini" --prompt="exit node › ")
+        [ -n "$NODE" ] || exit 0
+        [ "$NODE" = none ] && NODE=""
+        $TS set --exit-node="$NODE" && notify-send -a tailscale "Exit node" "${NODE:-none}" ;;
+      "Copy IP"*)
+        $TS ip -4 | head -1 | wl-copy && notify-send -a tailscale "Copied" "$SELF IP" ;;
+      "Send file"*)
+        TO=$(printf '%s' "$J" | jq -r '(.Peer // {})[] | select(.Online) | .HostName' | fuzzel --dmenu --config "$HOME/.config/fuzzel/hypr.ini" --prompt="send to › ")
+        [ -n "$TO" ] || exit 0
+        FILE=$(fd -t f . ~/Downloads ~/Pictures/Screenshots ~/Videos/Recordings --changed-within 30d 2>/dev/null \
+          | head -200 | fuzzel --dmenu --config "$HOME/.config/fuzzel/hypr.ini" --prompt="file › ")
+        [ -n "$FILE" ] || exit 0
+        $TS file cp "$FILE" "$TO:" && notify-send -a tailscale "Sent to $TO" "$(basename "$FILE")" ;;
+      "● "*|"○ "*)
+        HOST=${PICK#* }
+        IP=$(printf '%s' "$J" | jq -r --arg h "$HOST" '(.Peer // {})[] | select(.HostName == $h) | .TailscaleIPs[0]')
+        printf '%s' "$IP" | wl-copy && notify-send -a tailscale "Copied $HOST" "$IP" ;;
+      Disconnect) $TS down ;;
+    esac
+    ;;
+esac
+
